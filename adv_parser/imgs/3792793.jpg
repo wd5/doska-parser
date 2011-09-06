@@ -1,2 +1,0 @@
-<br />
-<b>Warning</b>:  mysql_num_rows() expects parameter 1 to be resource, boolean given in <b>/usr/web/relcom/e1.ru/www/auto/sale/functions.php</b> on line <b>331</b><br />
