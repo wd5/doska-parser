@@ -88,6 +88,15 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '4-j4$%+i2ep5cc6vkn%b1^49bkgirm^7uw+v@1jm$!^5b6dl_-'
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.contrib.messages.context_processors.messages",
+)
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -123,6 +132,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'south',
     'core',
 )
 
@@ -148,6 +158,9 @@ LOGGING = {
         },
     }
 }
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/core/list/'
 
 try:
     from settings_local import *

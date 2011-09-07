@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load url from future %}
+
+{% block title %}Объявление {{ adv.adv_id }}{% endblock title %}
+
+{% block header %}
+    <h1>{{ adv.title }}</h1>
+{% endblock header %}
+
+{% block content %}
+    <p>Марка: {{ adv.mark }}</p>
+    <p>Модель: {{ adv.model }}</p>
+    <p>Год выпуска: {{ adv.year }}</p>
+    <p>Цена: {{ adv.price }} руб.</p>
+    <p></p>
+
+    <div style="position: absolute; margin-top: 20px;">
+        <table>
+            <tr>
+                <td class="action_links"><a href="{% url 'core.views.adv_import' id=adv.adv_id %}">Подать</a></td>
+                <td class="action_links"><a class="a_delete" href="{% url 'core.views.adv_delete' id=adv.adv_id %}">Удалить</a></td>
+                <td class="action_links"><a href="{% url 'core.views.adv_wait' id=adv.adv_id %}">Отложить</a></td>
+            </tr>
+        </table>
+    </div>
+{% endblock content %}

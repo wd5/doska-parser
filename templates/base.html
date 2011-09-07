@@ -1,0 +1,59 @@
+{% load url from future %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>
+        {% block title %}
+        {% endblock title %}
+    </title>
+    {% block head %}
+        <style type="text/css">
+            .menu_item {
+                float: left;
+                margin-right: 10px;
+            }
+            #div_auth {
+                position: absolute;
+                right: 5px;
+                top: 3px;
+            }
+        </style>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript">
+        $(document).ready(function(){
+            $('.a_delete').click(function(){
+                return confirm("Вы уверены, что хотите удалить это объявление?");
+            });
+        });
+        </script>
+    {% endblock head %}
+</head>
+<body>
+    <div id="div_auth">
+        {% if user.is_authenticated %}
+            Вы вошли как: <strong>{{ user.username }}</strong>
+            <a href="{% url 'core.views.logout_view' %}">Выйти</a>
+        {% endif %}
+    </div>
+    <div>
+        {% block header %}
+            <h1>Очередь объявлений для импорта</h1>
+        {% endblock header %}
+    </div>
+    <div>
+        {% block menu %}
+            <div class="menu_item"><a href="{% url 'core.views.list' %}">Список объявлений</a></div>
+            <div class="menu_item"><a href="{% url 'core.views.next' %}">Очередь</a></div>
+        {% endblock menu %}
+    </div>
+    <div style="padding-top: 10px;">
+        {% block content %}
+        {% endblock content %}
+    </div>
+    <div>
+        {% block footer %}
+        {% endblock footer %}
+    </div>
+</body>
+</html>
