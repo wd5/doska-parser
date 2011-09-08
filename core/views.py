@@ -1,9 +1,12 @@
 from django.template.context import RequestContext
 from models import E1AutoAdv
+import settings
 from django.shortcuts import render_to_response, redirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.db.models import Q
+from datetime import datetime, timedelta
 
 def _go_back(request):
     ref = request.META.get('HTTP_REFERER')
@@ -18,23 +21,32 @@ def logout_view(request):
 
 @login_required()
 def list(request):
-    advs = E1AutoAdv.objects.filter(imported=False, deleted=False).order_by('-order_id', 'updated')
+    advs = E1AutoAdv.objects.filter(imported=False, deleted=False).order_by('-order_id', '-updated')
+    advs = advs.filter(Q(blocked_when__lt=datetime.now()-timedelta(minutes=settings.ADV_BLOCK_MINUTES))|Q(blocked_by=request.user)|Q(blocked_by=None))
     return render_to_response('list.html', locals(), context_instance=RequestContext(request))
 
 @login_required()
 def next(request):
-    adv = E1AutoAdv.objects.filter(imported=False, deleted=False).order_by("-order_id")[0]
+    advs = E1AutoAdv.objects.filter(imported=False, deleted=False).order_by('-order_id', '-updated')
+    adv = advs.filter(Q(blocked_when__lt=datetime.now()-timedelta(minutes=settings.ADV_BLOCK_MINUTES))|Q(blocked_by=request.user)|Q(blocked_by=None))[0]
+    adv.blocked_by = request.user
+    adv.blocked_when = datetime.now()
+    adv.save()
     return render_to_response('adv_show.html', locals(), context_instance=RequestContext(request))
 
 @login_required()
 def adv_show(request, id):
     adv = E1AutoAdv.objects.get(adv_id=id, deleted=False)
+    adv.blocked_by = request.user
+    adv.blocked_when = datetime.now()
+    adv.save()
     return render_to_response('adv_show.html', locals(), context_instance=RequestContext(request))
 
 @login_required()
 def adv_import(request, id):
     adv = E1AutoAdv.objects.get(adv_id=id, deleted=False)
     adv.imported = True
+    adv.blocked_by = adv.blocked_when = None
     adv.save()
     return _go_back(request)
 
@@ -42,6 +54,7 @@ def adv_import(request, id):
 def adv_delete(request, id):
     adv = E1AutoAdv.objects.get(adv_id=id)
     adv.deleted = True
+    adv.blocked_by = adv.blocked_when = None
     adv.save()
     return _go_back(request)
 

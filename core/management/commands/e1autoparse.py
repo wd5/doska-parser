@@ -2,11 +2,14 @@
 from django.core.management.base import BaseCommand
 from core.models import E1AutoAdv
 from core.adv_parser.e1print_adsource import E1PrintAdSource
+from datetime import datetime
+from time import strptime
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for ad in E1PrintAdSource(50, 15):
-            print "Parsing adv %s" % E1PrintAdSource.last_id
+        adsource = E1PrintAdSource(50, 30)
+        for ad in adsource:
+            print "Parsing adv %s" % adsource.get_current_id()
             new_adv = E1AutoAdv()
             new_adv.mark = ad.get('mark', '')
             new_adv.model = ad.get('model', '')
@@ -15,8 +18,12 @@ class Command(BaseCommand):
             new_adv.probeg = ad.get('probeg', 0)
             new_adv.volume = ad.get('volume', 0)
             new_adv.state = ad.get('state', '')
-            new_adv.updated = ad.get('updated', 0)
-            new_adv.valid_till = ad.get('valid_till', 0)
+            updated = ad.get('updated', None)
+            if updated:
+                new_adv.updated = datetime(*strptime(updated, '%d.%m.%Y %H:%M')[:5])
+            valid_till = ad.get('valid_till', None)
+            if valid_till:
+                new_adv.valid_till = datetime(*strptime(valid_till, '%d.%m.%Y')[:5])
             new_adv.color = ad.get('color', '')
             new_adv.type = ad.get('type', '')
             new_adv.engine_type = ad.get('engine_type', '')
@@ -29,5 +36,6 @@ class Command(BaseCommand):
             new_adv.address = ad.get('address', '')
             new_adv.fax = ad.get('fax', '')
             new_adv.images = ad.get('images', '')
-            new_adv.adv_id = new_adv.order_id = E1PrintAdSource.last_id
+            new_adv.adv_id = adsource.get_current_id()
+            new_adv.order_id = 1
             new_adv.save()

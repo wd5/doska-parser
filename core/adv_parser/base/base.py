@@ -110,3 +110,6 @@ class BaseAdSource(object):
     def parse(self, source):
         """Парсит ответ"""
         pass
+
+    def get_current_id(self):
+        return self.curr_id

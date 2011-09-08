@@ -161,6 +161,7 @@ LOGGING = {
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/core/list/'
+ADV_BLOCK_MINUTES = 60
 
 try:
     from settings_local import *

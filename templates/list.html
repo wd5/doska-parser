@@ -31,10 +31,10 @@
 {% block content %}
     <table style="width: 100%;">
         <tr>
-            <th style="width: 150px;">Дата</th>
+            <th style="width: 150px;">Дата обновления</th>
             <th>Заголовок</th>
             <th style="width: 150px;">С фото</th>
-            <th style="width: 100px;">Отложенное</th>
+            <th style="width: 100px;">Статус</th>
 
         </tr>
     {% for adv in advs %}
@@ -42,7 +42,7 @@
             <td>{{ adv.updated|date:"d.m.Y" }}</td>
             <td><a href="{% url 'core.views.adv_show' id=adv.adv_id %}">{{ adv.title }}</a></td>
             <td style="width: 150px;">{% if adv.images %}Да{% else %}Нет{% endif %}</td>
-            <td style="width: 100px;">{% if adv.order_id < 0 %}Да{% else %}Нет{% endif %}</td>
+            <td style="width: 100px;">{% if adv.imported %}Импортировано{% else %}{% if adv.order_id < 0 %}Отложено{% else %}Новое{% endif %}{% endif %}</td>
             <td class="action_links"><a href="{% url 'core.views.adv_import' id=adv.adv_id %}">Подать</a></td>
             <td class="action_links"><a class="a_delete" href="{% url 'core.views.adv_delete' id=adv.adv_id %}">Удалить</a></td>
             <td class="action_links"><a href="{% url 'core.views.adv_wait' id=adv.adv_id %}">Отложить</a></td>
