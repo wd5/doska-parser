@@ -2,7 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
+
 
 class E1AutoAdv(models.Model):
     mark = models.CharField(max_length=30)
@@ -38,3 +38,18 @@ class E1AutoAdv(models.Model):
 
     def __unicode__(self):
         return self.title()
+
+class DoskaField(models.Model):
+    group_name = models.TextField()
+    field_name = models.TextField()
+
+    def __unicode__(self):
+        return self.field_name
+
+    class META:
+        unique_together = (('group_name', 'field_name'),)
+
+class Map(models.Model):
+    imported_adv_class = models.TextField()
+    doska_field_name = models.TextField()
+    imported_field_name = models.TextField(blank=True, null=True)

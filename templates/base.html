@@ -13,6 +13,9 @@
                 float: left;
                 margin-right: 10px;
             }
+            .clear {
+                clear: both;
+            }
             #div_auth {
                 position: absolute;
                 right: 5px;
@@ -45,6 +48,7 @@
         {% block menu %}
             <div class="menu_item"><a href="{% url 'core.views.list' %}">Список объявлений</a></div>
             <div class="menu_item"><a href="{% url 'core.views.next' %}">Очередь</a></div>
+            <div class="clear"></div>
         {% endblock menu %}
     </div>
     <div style="padding-top: 10px;">
