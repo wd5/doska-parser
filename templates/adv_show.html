@@ -4,15 +4,13 @@
 {% block title %}Объявление {{ adv.adv_id }}{% endblock title %}
 
 {% block header %}
-    <h1>{{ adv.title }}</h1>
+    <h1>Объявление {{ adv.adv_id }}</h1>
 {% endblock header %}
 
 {% block content %}
-    <p>Марка: {{ adv.mark }}</p>
-    <p>Модель: {{ adv.model }}</p>
-    <p>Год выпуска: {{ adv.year }}</p>
-    <p>Цена: {{ adv.price }} руб.</p>
-    <p></p>
+    {% for k, v in adv_data %}
+        <div>{{ k }}: {{ v }}</div>
+    {% endfor %}
 
     <div style="position: absolute; margin-top: 20px;">
         <table>

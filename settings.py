@@ -1,4 +1,3 @@
-# Django settings for e1import project.
 import os
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -112,7 +111,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'e1import.urls'
+ROOT_URLCONF = 'adv_parser.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -162,6 +161,10 @@ LOGGING = {
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/core/list/'
 ADV_BLOCK_MINUTES = 60
+
+PARSERS_ENABLED = (
+    'core.adv_parser.e1print_adsource.E1PrintAdSource',
+)
 
 try:
     from settings_local import *

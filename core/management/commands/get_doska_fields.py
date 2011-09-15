@@ -1,12 +1,13 @@
 # coding: utf8
 from django.core.management.base import BaseCommand
-from core.models import DoskaField
+from core.models import DoskaField, E1AutoAdv
+from settings import *
 import urllib2
 import json
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        group_name = 'auto'
+        group_name = E1AutoAdv.group_name
         response = urllib2.urlopen('http://localhost:5000/doska/ajax/get_adv_fields/%s/' % group_name)
         if response.getcode() == 200:
             data = json.loads(response.read())

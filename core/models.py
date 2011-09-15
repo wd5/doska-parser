@@ -1,10 +1,32 @@
 # coding: utf8
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime
+from time import strptime
+from django.utils import simplejson
 
+class Adv(models.Model):
+    group_name = models.CharField(max_length=30)
+    adv_data = models.TextField()
+    with_images = models.BooleanField(default=False)
+    adv_id = models.IntegerField()
+    imported = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)
+    order_id = models.IntegerField()
+    blocked_by = models.ForeignKey(User, blank=True, null=True)
+    blocked_when = models.DateTimeField(blank=True, null=True)
+
+    def parse(self, ad, adsource):
+        self.group_name = adsource.group_name
+        if ad.get('images'):
+            self.with_images = True
+        self.adv_data = simplejson.dumps(ad)
+        self.adv_id = adsource.get_current_id()
+        self.order_id = 1
+        self.save()
 
 class E1AutoAdv(models.Model):
-    group = 'auto'
+    group_name = 'auto'
 
     mark = models.CharField(max_length=30)
     model = models.CharField(max_length=30)
@@ -33,6 +55,36 @@ class E1AutoAdv(models.Model):
     order_id = models.IntegerField()
     blocked_by = models.ForeignKey(User, blank=True, null=True)
     blocked_when = models.DateTimeField(blank=True, null=True)
+    
+    def parse(self, ad, adsource):
+        self.mark = ad.get('mark', '')
+        self.model = ad.get('model', '')
+        self.year = ad.get('year', 0)
+        self.price = ad.get('price', 0)
+        self.probeg = ad.get('probeg', 0)
+        self.volume = ad.get('volume', 0)
+        self.state = ad.get('state', '')
+        updated = ad.get('updated', None)
+        if updated:
+            self.updated = datetime(*strptime(updated, '%d.%m.%Y %H:%M')[:5])
+        valid_till = ad.get('valid_till', None)
+        if valid_till:
+            self.valid_till = datetime(*strptime(valid_till, '%d.%m.%Y')[:5])
+        self.color = ad.get('color', '')
+        self.type = ad.get('type', '')
+        self.engine_type = ad.get('engine_type', '')
+        self.privod = ad.get('privod', '')
+        self.kpp = ad.get('kpp', '')
+        self.rul = ad.get('rul', '')
+        self.seller = ad.get('seller', '')
+        self.phone = ad.get('phone', '')
+        self.email = ad.get('email', '')
+        self.address = ad.get('address', '')
+        self.fax = ad.get('fax', '')
+        self.images = ad.get('images', '')
+        self.adv_id = adsource.get_current_id()
+        self.order_id = 1
+        self.save()
 
     def title(self):
         return '%s %s' % (self.mark, self.model)
@@ -51,6 +103,6 @@ class DoskaField(models.Model):
         unique_together = (('group_name', 'field_name'),)
 
 class Map(models.Model):
-    imported_adv_class = models.CharField(max_length=50)
+    imported_adv_class = models.CharField(max_length=200)
     doska_field_name = models.CharField(max_length=50)
     imported_field_name = models.CharField(max_length=50, blank=True, null=True)

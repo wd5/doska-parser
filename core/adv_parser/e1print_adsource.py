@@ -1,10 +1,11 @@
 # -*- coding: UTF-8 -*-
 
-import e1_adsource
+from e1_adsource import *
 from lxml import etree
 
-class E1PrintAdSource(e1_adsource.E1AdSource):
+class E1PrintAdSource(E1AdSource):
     url = 'http://www.e1.ru/auto/sale/print/%s.html'
+    description = 'Парсер автообъявлений Е1 (с версии для печати)'
 
     def parse(self, source):
         """

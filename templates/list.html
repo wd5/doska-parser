@@ -31,17 +31,15 @@
 {% block content %}
     <table style="width: 100%;">
         <tr>
-            <th style="width: 150px;">Дата обновления</th>
-            <th>Заголовок</th>
+            <th>Id</th>
             <th style="width: 150px;">С фото</th>
             <th style="width: 100px;">Статус</th>
 
         </tr>
     {% for adv in advs %}
         <tr class="{% cycle 'row1' 'row2' %}">
-            <td>{{ adv.updated|date:"d.m.Y" }}</td>
-            <td><a href="{% url 'core.views.adv_show' id=adv.adv_id %}">{{ adv.title }}</a></td>
-            <td style="width: 150px;">{% if adv.images %}Да{% else %}Нет{% endif %}</td>
+            <td><a href="{% url 'core.views.adv_show' id=adv.adv_id %}">{{ adv.adv_id }}</a></td>
+            <td style="width: 150px;">{% if adv.with_images %}Да{% else %}Нет{% endif %}</td>
             <td style="width: 100px;">{% if adv.imported %}Импортировано{% else %}{% if adv.order_id < 0 %}Отложено{% else %}Новое{% endif %}{% endif %}</td>
             <td class="action_links"><a href="{% url 'core.views.adv_import' id=adv.adv_id %}">Подать</a></td>
             <td class="action_links"><a class="a_delete" href="{% url 'core.views.adv_delete' id=adv.adv_id %}">Удалить</a></td>

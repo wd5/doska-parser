@@ -1,13 +1,12 @@
 # -*- coding: UTF-8 -*-
-
-import os
-import urllib2
 import re
 from base.base import *
 from lxml import etree
 
 class E1AdSource(BaseAdSource):
     url = 'http://www.e1.ru/auto/sale/%s.html'
+    description = 'Парсер автообъявлений Е1'
+    group_name = 'auto'
 
     last_id = 935574
 

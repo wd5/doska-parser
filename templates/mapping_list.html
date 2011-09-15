@@ -1,0 +1,19 @@
+{% extends 'list.html' %}
+{% load url from future %}
+
+{% block title %}Список парсеров объявлений{% endblock title %}
+
+{% block header %}
+    <h1>Соответствие полей объявлений</h1>
+{% endblock header %}
+
+{% block content %}
+    <table>
+        <th>Доступные парсеры:</th>
+        {% for p, v_name in parser_names %}
+        <tr>
+            <td><a href="{% url 'core.views.mapping' parser_name=p %}">{{ v_name }}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock content %}
