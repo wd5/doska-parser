@@ -1,5 +1,6 @@
 from django.template.context import RequestContext
-from models import E1AutoAdv, DoskaField
+from django.db import models
+from models import E1AutoAdv, DoskaField, Map
 import settings
 from django.shortcuts import render_to_response, redirect
 from django.core.urlresolvers import reverse
@@ -10,7 +11,7 @@ from datetime import datetime, timedelta
 
 def _go_back(request):
     ref = request.META.get('HTTP_REFERER')
-    if ref:
+    if ref and '/next/' in ref:
         return redirect(ref)
     else:
         return redirect(reverse('core.views.list'))
@@ -68,6 +69,18 @@ def adv_wait(request, id):
 
 @login_required
 def mapping(request):
-    doska_fields = DoskaField.objects.filter(group_name='auto').order_by('field_name')
+    doska_fields = [f.field_name for f in DoskaField.objects.filter(group_name='auto').order_by('field_name')]
     imported_fields = sorted([''] + [f.name for f in E1AutoAdv._meta.fields])
-    return render_to_response('mapping.html', locals())
+    
+    if request.method == 'POST':
+        for f_name in doska_fields:
+            m_rule, _ = Map.objects.get_or_create(imported_adv_class=E1AutoAdv.__class__.__name__, doska_field_name=f_name)
+            m_rule.imported_field_name = request.POST.get(f_name, '')
+            m_rule.save()
+        saved = True
+
+    maps = Map.objects.filter(imported_adv_class=E1AutoAdv.__class__.__name__)
+    maps_dict = dict([(m.doska_field_name, m.imported_field_name) for m in maps])
+    map_fields = [(df, maps_dict.get(df)) for df in doska_fields]
+
+    return render_to_response('mapping.html', locals(), context_instance=RequestContext(request))

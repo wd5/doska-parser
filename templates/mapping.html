@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load url from future %}
+
+{% block head %}
+    {{ block.super }}
+    {% if saved %}
+    <script type="text/javascript">
+        alert('Сохранено успешно.')
+    </script>
+    {% endif %}
+    <style type="text/css">
+    .button {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    td {
+        padding-left: 30px;
+    }
+    </style>
+{% endblock %}
+
+{% block title %}Соответствие полей импортированных объявлений{% endblock title %}
+
+{% block header %}
+    <h1>Соответствие полей объявлений</h1>
+{% endblock header %}
+
+{% block content %}
+    <form method="POST" action="{% url 'core.views.mapping' %}">
+        {% csrf_token %}
+        <table>
+            <th>Наша доска</th>
+            <th>Импортированные объявления</th>
+            {% for df_name, imp_name in map_fields %}
+            <tr>
+                <td>{{ df_name }}</td>
+                <td>
+                    <select name={{ df_name }}>
+                    {% for f_name in imported_fields %}
+                        <option value="{{ f_name }}" {% if imp_name == f_name %}selected="selected"{% endif %}>{{ f_name }}</option>
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Сохранить" class="button"/></td>
+            </tr>
+        </table>
+
+    </form>
+{% endblock content %}
