@@ -1,6 +1,6 @@
 from django.template.context import RequestContext
 from django.utils import simplejson
-from models import E1AutoAdv, DoskaField, Map, Adv
+from models import DoskaField, Map, Adv
 import settings
 from utils.importer import parser_import
 from django.shortcuts import render_to_response, redirect
@@ -15,14 +15,14 @@ def _go_back(request):
     if ref and '/next/' in ref:
         return redirect(ref)
     else:
-        return redirect(reverse('core.views.list'))
+        return redirect(reverse('core.views.adv_list'))
 
 def logout_view(request):
     logout(request)
     return redirect('/login/')
 
 @login_required
-def list(request):
+def adv_list(request):
     advs = Adv.objects.filter(imported=False, deleted=False).order_by('-order_id')
     advs = advs.filter(Q(blocked_when__lt=datetime.now()-timedelta(minutes=settings.ADV_BLOCK_MINUTES))|Q(blocked_by=request.user)|Q(blocked_by=None))
     return render_to_response('list.html', locals(), context_instance=RequestContext(request))
@@ -30,11 +30,19 @@ def list(request):
 @login_required
 def next(request):
     advs = Adv.objects.filter(imported=False, deleted=False).order_by('-order_id')
-    adv = advs.filter(Q(blocked_when__lt=datetime.now()-timedelta(minutes=settings.ADV_BLOCK_MINUTES))|Q(blocked_by=request.user)|Q(blocked_by=None))[0]
-    adv.blocked_by = request.user
-    adv.blocked_when = datetime.now()
-    adv.save()
-    adv_data = [(k, v) for k, v in simplejson.loads(adv.adv_data).items()]
+    if not advs:
+        queue_is_empty = True
+    else:
+        adv = advs.filter(Q(blocked_when__lt=datetime.now()-timedelta(minutes=settings.ADV_BLOCK_MINUTES))|Q(blocked_by=request.user)|Q(blocked_by=None))[0]
+        adv.blocked_by = request.user
+        adv.blocked_when = datetime.now()
+        adv.save()
+        adv_data = []
+        for k, v in simplejson.loads(adv.adv_data).items():
+            if isinstance(v, list):
+                v = '[%s]' % ', '.join(v)
+            adv_data.append((k, v))
+#        adv_data = [(k, v) for k, v in simplejson.loads(adv.adv_data).items()]
     return render_to_response('adv_show.html', locals(), context_instance=RequestContext(request))
 
 @login_required
@@ -75,7 +83,7 @@ def mapping(request, parser_name):
     parser = parser_import(parser_name)
 
     doska_fields = [f.field_name for f in DoskaField.objects.filter(group_name='auto').order_by('field_name')]
-    imported_fields = sorted([''] + sorted(parser.keys.values()))
+    imported_fields = sorted([''] + parser.all_fields)
     
     if request.method == 'POST':
         for f_name in doska_fields:
@@ -94,4 +102,4 @@ def mapping(request, parser_name):
 @login_required
 def mapping_list(request):
     parser_names = zip(settings.PARSERS_ENABLED, [parser_import(p).description for p in settings.PARSERS_ENABLED])
-    return render_to_response('mapping_list.html', locals())
+    return render_to_response('mapping_list.html', locals(), context_instance=RequestContext(request))

@@ -3,11 +3,6 @@
 
 {% block head %}
     {{ block.super }}
-    {% if saved %}
-    <script type="text/javascript">
-        alert('Сохранено успешно.')
-    </script>
-    {% endif %}
     <style type="text/css">
     .button {
         margin-left: 10px;
@@ -26,7 +21,7 @@
 {% endblock header %}
 
 {% block content %}
-    <form method="POST" action="{% url 'core.views.mapping_list' %}">
+    <form method="POST" action="{% url 'core.views.mapping' parser_name=parser_name %}">
         {% csrf_token %}
         <table>
             <th>Наша доска</th>

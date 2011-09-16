@@ -21,10 +21,12 @@ class E1PrintAdSource(E1AdSource):
         try:
             l = tables[0][0][0].find('font').text.split()
             if len(l) > 2:
-                res['mark'] = ' '.join(l[:-1])
-                res['model'] = l[-1]
+                mark = ' '.join(l[:-1])
+                model = l[-1]
             else:
-                res['mark'], res['model'] = l
+                mark, model = l
+
+            res['model'] = [mark, model]
 
             self._parse_auto_info(res, tables[0][1])
 

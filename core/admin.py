@@ -1,5 +1,5 @@
-from models import E1AutoAdv, DoskaField
+from models import Adv, DoskaField
 from django.contrib import admin
 
-admin.site.register(E1AutoAdv)
+admin.site.register(Adv)
 admin.site.register(DoskaField)

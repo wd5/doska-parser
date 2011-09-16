@@ -8,17 +8,21 @@
 {% endblock header %}
 
 {% block content %}
-    {% for k, v in adv_data %}
-        <div>{{ k }}: {{ v }}</div>
-    {% endfor %}
+    {% if queue_is_empty %}
+        Очередь объявлений пуста.
+    {% else %}
+        {% for k, v in adv_data %}
+            <div>{{ k }}: {{ v }}</div>
+        {% endfor %}
 
-    <div style="position: absolute; margin-top: 20px;">
-        <table>
-            <tr>
-                <td class="action_links"><a href="{% url 'core.views.adv_import' id=adv.adv_id %}">Подать</a></td>
-                <td class="action_links"><a class="a_delete" href="{% url 'core.views.adv_delete' id=adv.adv_id %}">Удалить</a></td>
-                <td class="action_links"><a href="{% url 'core.views.adv_wait' id=adv.adv_id %}">Отложить</a></td>
-            </tr>
-        </table>
-    </div>
+        <div style="position: absolute; margin-top: 20px;">
+            <table>
+                <tr>
+                    <td class="action_links"><a href="{% url 'core.views.adv_import' id=adv.adv_id %}">Подать</a></td>
+                    <td class="action_links"><a class="a_delete" href="{% url 'core.views.adv_delete' id=adv.adv_id %}">Удалить</a></td>
+                    <td class="action_links"><a href="{% url 'core.views.adv_wait' id=adv.adv_id %}">Отложить</a></td>
+                </tr>
+            </table>
+        </div>
+    {% endif %}
 {% endblock content %}

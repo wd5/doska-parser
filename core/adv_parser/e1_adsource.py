@@ -35,6 +35,8 @@ class E1AdSource(BaseAdSource):
         u'Факс:': u'fax'
     }
 
+    all_fields = keys.values() + ['model', 'description', 'images']
+
     def parse(self, source):
         """
         parse(source) -> dict
@@ -49,8 +51,10 @@ class E1AdSource(BaseAdSource):
         td = tr[3]
         tables = td.findall('table')
 
-        res['mark'] = tables[0][0][1][0][-3].find('font')[0].text
-        res['model'] = tables[0][0][1][0][-1][0].text
+        mark = tables[0][0][1][0][-3].find('font')[0].text
+        model = tables[0][0][1][0][-1][0].text
+
+        res['model'] = [mark, model]
 
         self._parse_auto_info(res, tables[1][1])
 

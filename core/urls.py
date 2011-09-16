@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
-    url(r'^list/$', 'core.views.list'),
+    url(r'^list/$', 'core.views.adv_list'),
     url(r'^next/$', 'core.views.next'),
     url(r'^show/(?P<id>\d+)/$', 'core.views.adv_show'),
     url(r'^import/(?P<id>\d+)/$', 'core.views.adv_import'),
