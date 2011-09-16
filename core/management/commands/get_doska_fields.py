@@ -1,6 +1,6 @@
 # coding: utf8
 from django.core.management.base import BaseCommand
-from core.models import DoskaField
+from core.models import DoskaField, Map
 from utils.importer import parser_import
 import settings
 import urllib2
@@ -20,4 +20,6 @@ class Command(BaseCommand):
                     for f in fields:
                         d_field = DoskaField(group_name=group_name, field_name=f)
                         d_field.save()
+                        default_map = Map(imported_adv_class=enabled_parser, doska_field_name=f, imported_field_name='')
+                        default_map.save()
         

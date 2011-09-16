@@ -7,6 +7,11 @@ from core.models import Adv, Map
 class Command(BaseCommand):
     def handle(self, *args, **options):
 
+        try:
+            advs_to_parse = int(args[0])
+        except:
+            advs_to_parse = 20
+
         for enabled_parser in settings.PARSERS_ENABLED:
             map_schema = Map.objects.filter(imported_adv_class=enabled_parser)
             if not map_schema:
@@ -14,8 +19,7 @@ class Command(BaseCommand):
 
             parser = parser_import(enabled_parser)
 
-            adsource = parser(50, 3)
+            adsource = parser(50, advs_to_parse)
             for ad in adsource:
-                print adsource.get_current_id()
                 new_adv = Adv()
                 new_adv.parse(ad, adsource, map_schema)
